@@ -12,6 +12,33 @@ bot = Bot(token=config.token)
 dp = Dispatcher(bot)
 
 
+
+import sqlite3
+
+def savetodb(chat_id, link):
+    db = sqlite3.connect('server.db')
+    sql = db.cursor()
+    # sql.execute("""CREATE TABLE IF NOT EXISTS users (
+    # user_id TEXT,
+    # link TEXT
+    # )""")
+    # db.commit()
+
+
+    # test_id = input("Enter user id for put them in database: ")
+    # test_link = input('Enter link for put them in database: ')
+
+
+    #sql.execute(f"INSERT INTO users VALUES ('{test_id}, {test_link}')")
+    sql.execute(f"INSERT INTO log(chat_id, link) VALUES (?,?)",(chat_id,link))
+
+    db.commit()
+
+    for value in sql.execute("SELECT * FROM log"):
+        print (value)
+
+
+
 import os, fnmatch
 def findallmp3(pattern, path):
     result = []
@@ -102,6 +129,7 @@ try:
         await bot.send_audio(msg.from_user.id, open(oursong, 'rb'), "Вот ваша песня =)")
         #print("Кол-во песен в плейлисте: " + str(len(song))  +  "    " + str(song))
         os.remove(oursong)
+        savetodb(msg.from_user.id, msg.text)
 
 
 
