@@ -1,9 +1,7 @@
-import os
-
 from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils import executor
-import asyncio
+
 import config
 
 import youtube_dl
@@ -34,8 +32,8 @@ def savetodb(chat_id, link):
 
     db.commit()
 
-    for value in sql.execute("SELECT * FROM log"):
-        print (value)
+    # for value in sql.execute("SELECT * FROM log"):
+    #     print (value)
 
 
 
@@ -98,10 +96,10 @@ async def process_start_command(message: types.Message):
     hello2 = '\nБот полностью бесплатный и его единственным ограничением. является размер выходного файла не больше 50мб, чего более чем достаточно для любой песни стандартной длительности.😌'
     await message.reply(hello + hello2)
 
-try:
-    @dp.message_handler()
-    async def echo_message(msg: types.Message):
 
+@dp.message_handler()
+async def echo_message(msg: types.Message):
+    try:
         await bot.send_message(msg.from_user.id, "Подождите, пока бот скачает песню с ютуба, после этого он пришлет ее вам.")
         download_link = msg.text
         index = download_link.find("&")
@@ -130,11 +128,9 @@ try:
         #print("Кол-во песен в плейлисте: " + str(len(song))  +  "    " + str(song))
         os.remove(oursong)
         savetodb(msg.from_user.id, msg.text)
+    except:
+        await bot.send_message(msg.from_user.id, "Что пошло не так😭\nВозможно вы указали неверную ссылку либо объем файла превышает 50 мегабайт.\nПопробуйте еще раз.")
 
-
-
-except:
-    pass
 
 
 
