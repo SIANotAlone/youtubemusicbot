@@ -108,28 +108,35 @@ async def echo_message(msg: types.Message):
             download_mp3(get_link[0])
             index2 = get_link[0].split("=")
             video_id = index2[1]
-            print (video_id)
+            #print(video_id)
         else:
             download_mp3(download_link)
-            try:
+
+            if msg.text.find("list")>0:
                 index2 = download_link[0].split("=")
                 video_id = index2[1]
+                #print('video id: ' + video_id + "\ndownload link: " + download_link[0])
                 #print(video_id)
-            except:
+            elif msg.text.find('watch?v=')>0:
+                index2 = msg.text.split('=')
+                video_id = index2[1]
+                #print('video id: ' + video_id+"\ndownload link: " + download_link[0])
+            elif msg.text.find('youtu.be')>0:
                 index2 = download_link.split("/")
                 video_id = index2[3]
+
                 #print(video_id)
 
         #song = getmp3name()
 
         oursong = findourmp3(video_id)
 
-        await bot.send_audio(msg.from_user.id, open(oursong, 'rb'), "Вот ваша песня =)")
+        await bot.send_audio(msg.from_user.id, open(oursong, 'rb'), "Вот ваша песня 😊")
         #print("Кол-во песен в плейлисте: " + str(len(song))  +  "    " + str(song))
         os.remove(oursong)
         savetodb(msg.from_user.id, msg.text)
     except:
-        await bot.send_message(msg.from_user.id, "Что пошло не так😭\nВозможно вы указали неверную ссылку либо объем файла превышает 50 мегабайт.\nПопробуйте еще раз.")
+        await bot.send_message(msg.from_user.id, "Что пошло не так 😭\nВозможно вы указали неверную ссылку либо объем файла превышает 50 мегабайт.\nПопробуйте еще раз.")
 
 
 
